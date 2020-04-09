@@ -1,0 +1,5 @@
+.idea/
+.terraform/
+*.out
+*.envrc
+*.lambda.zip
