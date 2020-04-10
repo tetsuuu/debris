@@ -8,6 +8,12 @@ TODO :
  - ECS追加する
  - SNS追加する
 
+## iam_user
+IAMリソースの作成
+
+TODO : 
+ - ポリシーもうちょっといい感じにしたい
+
 ## s3_event_notify
 S3におかれたファイルを検知してSlackに通知するやつ
 
