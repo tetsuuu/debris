@@ -1,0 +1,34 @@
+version: 0.2
+
+env:
+  variables:
+    action: stop
+    service: hoge
+    cluster: fuga
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.7
+    commands:
+      - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+      - unzip awscliv2.zip
+      - ./aws/install
+  build:
+    commands:
+       - echo "ECS ${service} ${action} execution"
+       - aws ecs describe-services --services ${service} --cluster ${cluster} --query '*[].{Service:serviceName,desiredTasks:desiredCount,runningTasks:runningCount}'
+       - |
+         if [ ${action} = 'stop' ]; then
+           aws ecs update-service --service ${service} --cluster ${cluster} --desired-count 0 --query '*[].{Service:serviceName,desiredTasks:desiredCount}'
+           sleep 60
+         elif [ ${action} = 'start' ]; then
+           aws ecs update-service --service ${service} --cluster ${cluster} --desired-count 1 --query '*[].{Service:serviceName,desiredTasks:desiredCount}'
+           sleep 90
+         else
+           echo "No specify service"
+         fi
+  post_build:
+    commands:
+      - aws ecs describe-services --services ${service} --cluster ${cluster} --query '*[].{Service:serviceName,desiredTasks:desiredCount,runningTasks:runningCount}'
+      - echo "ECS ${service} ${action} done"
