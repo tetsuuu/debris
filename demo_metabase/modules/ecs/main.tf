@@ -103,7 +103,7 @@ data "aws_iam_policy_document" "iam_policy_document_get_secret" {
     ]
 
     resources = [
-      "arn:aws:ssm:ap-northeast-1:652679745562:parameter/demo/metabase/db-conn",
+      "arn:aws:ssm:ap-northeast-1:123456789012:parameter/demo/metabase/db-conn",
     ]
   }
 }
