@@ -13,7 +13,7 @@ module "metabase_ecs" {
   source = "./modules/ecs"
 
   vpc_id           = var.service_vpc
-  ecs_cluster_name = "maintenance"
+  ecs_cluster_name = "demo"
   lb_target        = module.metabase_alb.target_arn
   lb_dimension     = module.metabase_alb.alb_dimension
   container_label  = "v0.35.3"
