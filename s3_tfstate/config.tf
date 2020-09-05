@@ -8,3 +8,13 @@ provider "template" {
 }
 
 data "aws_caller_identity" "self" {}
+
+
+// backendの設定を追記する
+terraform {
+  backend "s3" {
+    bucket = "terraform.sandbox.com"
+    key    = "terraform.tfstate"
+    region = "ap-northeast-1"
+  }
+}
