@@ -187,6 +187,14 @@ Parameters:
     Type: String
     Default: ""
     Description: The endpoint URL to forward the traces to, useful for forwarding traces through a proxy
+#  LoggingBucket:
+#    Type: String
+#    Default: ""
+#    Description: The logging bucket for ForwerderBucket
+#  LogPrefix:
+#    Type: String
+#    Default: ""
+#    Description: The log prefix for ForwerderBucket
 Conditions:
   IsAWSChina:
     Fn::Equals:
@@ -345,7 +353,7 @@ Resources:
         Bucket: !Ref ForwarderBucket
         Key:
           Fn::Sub:
-            - "aws-dd-forwarder-${DdForwarderVersion}.zip"
+            - "aws-dd-forwarder-$${DdForwarderVersion}.zip"
             - {
                 DdForwarderVersion:
                   !FindInMap [Constants, DdForwarder, Version],
@@ -559,8 +567,8 @@ Resources:
       Principal:
         Fn::If:
           - IsAWSChina
-          - !Sub "logs.${AWS::Region}.amazonaws.com.cn"
-          - !Sub "logs.${AWS::Region}.amazonaws.com"
+          - !Sub "logs.$${AWS::Region}.amazonaws.com.cn"
+          - !Sub "logs.$${AWS::Region}.amazonaws.com"
       SourceAccount: !Ref "AWS::AccountId"
   S3Permission:
     Type: AWS::Lambda::Permission
@@ -591,7 +599,7 @@ Resources:
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName:
-        Fn::Sub: /aws/lambda/${Forwarder}
+        Fn::Sub: /aws/lambda/$${Forwarder}
       RetentionInDays:
         Ref: LogRetentionInDays
   DdApiKeySecret:
@@ -613,6 +621,11 @@ Resources:
         BlockPublicPolicy: true
         IgnorePublicAcls: true
         RestrictPublicBuckets: true
+      LoggingConfiguration:
+        DestinationBucketName:
+          Ref: LoggingBucket
+        LogFilePrefix:
+          Ref: LogPrefix
   ForwarderBucketPolicy:
     Type: 'AWS::S3::BucketPolicy'
     Properties:
@@ -625,8 +638,8 @@ Resources:
               - s3:*
             Effect: Deny
             Resource:
-              - !Sub "${ForwarderBucket.Arn}"
-              - !Sub "${ForwarderBucket.Arn}/*"
+              - !Sub "$${ForwarderBucket.Arn}"
+              - !Sub "$${ForwarderBucket.Arn}/*"
             Condition:
               Bool:
                 "aws:SecureTransport": "false"
@@ -641,7 +654,7 @@ Resources:
           - SetSourceZipUrl
           - !Ref SourceZipUrl
           - Fn::Sub:
-              - "https://github.com/DataDog/datadog-serverless-functions/releases/download/aws-dd-forwarder-${DdForwarderVersion}/aws-dd-forwarder-${DdForwarderVersion}.zip"
+              - "https://github.com/DataDog/datadog-serverless-functions/releases/download/aws-dd-forwarder-$${DdForwarderVersion}/aws-dd-forwarder-$${DdForwarderVersion}.zip"
               - {
                   DdForwarderVersion:
                     !FindInMap [Constants, DdForwarder, Version],
@@ -760,8 +773,17 @@ Outputs:
         - Forwarder
         - Arn
     Export:
-      Name:
-        Fn::Sub: ${AWS::StackName}-ForwarderArn
+      Name: DatadogForwarderArn
+  ForwarderBucketName:
+    Description: Datadog Forwarder Resource bucket name
+    Value: !Ref ForwarderBucket
+    Export:
+      Name: DatadogForwarderBucket
+  ForwarderLogGroupName:
+    Description: CloudWatch Log group for Datadog Forwarder
+    Value: !Ref LogGroup
+    Export:
+      Name: ForwarderLogGroup
 Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:
