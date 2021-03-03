@@ -9,3 +9,7 @@ variable "protocol" {
 variable "role" {
   type = string
 }
+
+variable "target_lambda" {
+  type = string
+}

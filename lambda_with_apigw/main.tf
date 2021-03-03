@@ -1,21 +1,26 @@
-module "lambda_with_params" {
+module "lambda_with_hook" {
   source = "./modules/lambda"
 
   account_id = data.aws_caller_identity.self.account_id
-  func_name  = "lambda_with_webhook"
+  func_name  = "lambda_hook"
   timeout    = "30"
 
-  lambda_webhook = module.api_gateway.execution_arn
+  lambda_webhook = "${module.api_gateway.execution_arn}/*/*/lambda_hook"
 
   lambda_env = {
-    STAGE = "sandbox"
+    STAGE = "poc"
   }
 }
 
 module "api_gateway" {
   source = "./modules/api_gateway"
 
-  gw_name  = "lambda_with_webhook"
-  protocol = "HTTP"
-  role     = "sandbox"
+  gw_name       = "lambda_hook"
+  protocol      = "HTTP"
+  role          = "poc"
+  target_lambda = module.lambda_with_hook.func_uri
+}
+
+output "execute_url" {
+  value = module.api_gateway.execution_url
 }
