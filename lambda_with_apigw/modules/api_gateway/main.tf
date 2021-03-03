@@ -1,11 +1,11 @@
 resource "aws_apigatewayv2_api" "lambda_webhook" {
-    name                         = "lambda_with_webhook"
-    description                  = "Created by AWS Lambda"
-    protocol_type                = "HTTP"
+  name          = var.gw_name
+  description   = "Post URL for AWS Lambda"
+  protocol_type = var.protocol
 }
 
 resource "aws_apigatewayv2_stage" "lambda_webhook" {
   api_id      = aws_apigatewayv2_api.lambda_webhook.id
-  name        = "sandbox"
+  name        = var.role
   auto_deploy = true
 }

@@ -14,7 +14,7 @@ data "aws_iam_policy_document" "lambda_role" {
 data "aws_iam_policy_document" "lambda_policy" {
 
   statement {
-    effect  = "Allow"
+    effect = "Allow"
     actions = [
       "logs:CreateLogStream",
       "logs:PutLogEvents",
@@ -26,21 +26,6 @@ data "aws_iam_policy_document" "lambda_policy" {
   }
 }
 
-//data "aws_iam_policy_document" "lambda_ssm_policy" {
-//
-//  statement {
-//    effect = "Allow"
-//    actions = [
-//      "ssm:GetParameters",
-//      "ssm:GetParameter",
-//    ]
-//
-//    resources = [
-//      "arn:aws:ssm:ap-northeast-1:${var.account_id}:parameter/${var.param_name}",
-//    ]
-//  }
-//}
-//
 data "archive_file" "lambda_func" {
   type        = "zip"
   source_file = "${path.module}/src/${var.func_name}.py"
@@ -57,21 +42,11 @@ resource "aws_iam_policy" "lambda_policy" {
   policy = data.aws_iam_policy_document.lambda_policy.json
 }
 
-//resource "aws_iam_policy" "lambda_ssm_policy" {
-//  name   = "${var.func_name}_ssm"
-//  policy = data.aws_iam_policy_document.lambda_ssm_policy.json
-//}
-//
 resource "aws_iam_role_policy_attachment" "lambda" {
   role       = aws_iam_role.lambda_role.name
   policy_arn = aws_iam_policy.lambda_policy.arn
 }
 
-//resource "aws_iam_role_policy_attachment" "lambda_ssm" {
-//  role       = aws_iam_role.lambda_role.name
-//  policy_arn = aws_iam_policy.lambda_ssm_policy.arn
-//}
-//
 resource "aws_cloudwatch_log_group" "lambda" {
   name              = "/aws/lambda/${var.func_name}"
   retention_in_days = 14
@@ -84,8 +59,6 @@ resource "aws_lambda_function" "default" {
   handler       = "${var.func_name}.lambda_handler"
   role          = aws_iam_role.lambda_role.arn
   timeout       = var.timeout
-
-  reserved_concurrent_executions = "0"
 
   source_code_hash = data.archive_file.lambda_func.output_base64sha256
 

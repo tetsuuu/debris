@@ -2,10 +2,6 @@ variable "account_id" {
   type = string
 }
 
-//variable "param_name" {
-//  type = string
-//}
-//
 variable "func_name" {
   type = string
 }
@@ -19,5 +15,6 @@ variable "lambda_env" {
 }
 
 variable "lambda_webhook" {
-  type = string
+  type    = string
+  default = null
 }
