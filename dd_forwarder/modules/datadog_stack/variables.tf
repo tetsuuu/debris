@@ -2,12 +2,11 @@ variable "role" {
   type = string
 }
 
-variable "filter_pattern" {
-  type    = string
-  default = null
+variable "api_key" {
+  type = string
 }
 
-variable "api_key" {
+variable "dd_version" {
   type = string
 }
 
@@ -17,4 +16,12 @@ variable "s3_bucket" {
 
 variable "bucket_prefix" {
   type = list(string)
+}
+
+variable "logging_bucket" {
+  type = string
+}
+
+variable "log_prefix" {
+  type = string
 }
