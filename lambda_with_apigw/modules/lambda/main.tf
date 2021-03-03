@@ -79,5 +79,5 @@ resource "aws_lambda_permission" "lambda_permission" {
   action        = "lambda:InvokeFunction"
   function_name = var.func_name
   principal     = "apigateway.amazonaws.com"
-  source_arn    = var.lambda_webhook
+  source_arn    = "${var.lambda_webhook}/*/*"
 }
