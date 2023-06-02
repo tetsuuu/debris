@@ -1,0 +1,85 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Resources:
+  LogGroup:
+    Type: 'AWS::Logs::LogGroup'
+    Properties:
+      LogGroupName: !Sub "/aws/ecs/${AWS::StackName}"
+
+  Service:
+    Type: 'AWS::ECS::Service'
+    Properties:
+      Cluster: !Ref ClusterName
+      ServiceName: !Ref AWS::StackName
+      CapacityProviderStrategy:
+        - CapacityProvider: FARGATE_SPOT
+          Base: 1
+          Weight: 1
+      TaskDefinition: !Ref TaskDefinition
+      DesiredCount: 1
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          Subnets: !Ref Subnets
+          SecurityGroups: !Ref SecurityGroups
+          AssignPublicIp: DISABLED
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 100
+      ServiceConnectConfiguration:
+        Enabled: true
+        Namespace: !Ref LocalDomain
+        Services:
+          - PortName: internal
+            DiscoveryName: !Ref AWS::StackName
+            ClientAliases:
+              - Port: 80
+                DnsName: !Sub ${AWS::StackName}.${LocalDomain}
+        LogConfiguration:
+          LogDriver: awslogs
+          Options:
+            awslogs-group: !Ref LogGroup
+            awslogs-region: ap-northeast-1
+            awslogs-stream-prefix: !Ref LocalDomain
+
+  TaskDefinition:
+    Type: 'AWS::ECS::TaskDefinition'
+    Properties:
+      Family: !Ref AWS::StackName
+      ExecutionRoleArn: !Sub "arn:aws:iam::${AWS::AccountId}:role/${TaskExecRoleName}"
+      TaskRoleArn: !Sub "arn:aws:iam::${AWS::AccountId}:role/${TaskRoleName}"
+      NetworkMode: awsvpc
+      Cpu: 256
+      Memory: 512
+      RequiresCompatibilities:
+        - FARGATE
+      ContainerDefinitions:
+        - Image: !Ref ImageName
+          Name: !Ref AWS::StackName
+          PortMappings:
+            - Name: internal
+              ContainerPort: 8080
+              HostPort: 8080
+              Protocol: tcp
+              AppProtocol: http
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Ref LogGroup
+              awslogs-region: ap-northeast-1
+              awslogs-stream-prefix: !Ref AWS::StackName
+
+Parameters:
+  ClusterName:
+    Type: String
+  LocalDomain:
+    Type: String
+  Subnets:
+    Type: CommaDelimitedList
+  SecurityGroups:
+    Type: CommaDelimitedList
+  TaskExecRoleName:
+    Type: String
+  TaskRoleName:
+    Type: String
+  ImageName:
+    Type: String
