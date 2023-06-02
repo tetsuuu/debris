@@ -1,32 +1,17 @@
 package main
 
 import (
-	// "github.com/tetsuuu/debris/simple-server/handler"
-	"log"
+	"github.com/tetsuuu/debris/simple-server/handler"
+	"github.com/tetsuuu/debris/simple-server/util"
 	"net/http"
-	"os"
 )
 
-var logger *log.Logger
-
-func init() {
-	logFile, err := os.OpenFile("server.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
-	if err != nil {
-		log.Fatal("Failed opening log file:", err)
-	}
-
-	logger = log.New(logFile, "", log.LstdFlags|log.Lmicroseconds)
-}
-
 func main() {
-	logger.Println("Start service")
+	logger.Init()
 
-	// http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-	// 	hello.HelloHandler(w, r, logger)
-	// })
+	http.HandleFunc("/", handler.HelloHandler)
+	http.HandleFunc("/health", handler.HealthHandler)
 
-	err := http.ListenAndServe(":8080", nil)
-	if err != nil {
-		logger.Println("Failed starting service:", err)
-	}
+	logger.Info("Server listening on port 8080...")
+	http.ListenAndServe(":8080", nil)
 }
