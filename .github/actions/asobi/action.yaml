@@ -5,12 +5,17 @@ inputs:
   arg:
     required: true
     description: 'コメントの引数'
+  root_pwd:
+    required: false
+    description: 'ルートディレクトリのパス'
 
 runs:
   using: "composite"
   steps:
   - name: Echo arg
     shell: bash
-    run: >
-      echo "arg: ${{ inputs.arg }}"
-      && echo "GITHUB_WORKSPACE: $GITHUB_WORKSPACE"
+    run: |
+      echo 
+      "arg: ${{ inputs.arg }}"
+      echo "root_pwd: $root_pwd"
+      echo "chirdlen_pwd: $pwd"

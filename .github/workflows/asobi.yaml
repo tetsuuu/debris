@@ -18,12 +18,14 @@ jobs:
         id: get_arg
         run: |
           echo "ARGS=`echo ${{ github.event.comment.body }} | awk '{print $2}'`" >> "$GITHUB_OUTPUT"
+          echo "ROOT_PWD=`pwd`" >> "$GITHUB_OUTPUT"
 
       - name: Arg trigger
         if: contains(github.event.comment.body, 'dayo')
         uses: ./.github/actions/asobi
         with:
           arg: ${{ steps.get_arg.outputs.ARGS }}
+          root_pwd: ${{ steps.get_arg.outputs.ROOT_PWD }}
 
       - name: Refer
         run: |
