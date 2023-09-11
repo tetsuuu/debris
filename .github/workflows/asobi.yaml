@@ -1,10 +1,10 @@
-name: Deploy with comment
+name: Comment asobi
 on:
   issue_comment:
     types: [created, edited]
 
 jobs:
-  build_and_push:
+  asobi:
     if: contains(github.event.comment.html_url, '/pull/') && startsWith(github.event.comment.body, '/asobi')
     permissions:
       pull-requests: write
@@ -15,12 +15,16 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Get argument
-        if: startsWith(github.event.comment.body, '/asobi')
+        id: get_arg
         run: |
-          echo "arg: ${{ github.event.comment.body }}"
+          echo "ARGS=`echo ${{ github.event.comment.body }} | awk '{print $1}'`" >> "$GITHUB_OUTPUT"
 
-      - name: Get aws-s3-object-concatenator binary
+      - name: Arg trigger
         if: contains(github.event.comment.body, 'dayo')
         uses: ./.github/actions/asobi
         with:
-          arg: ${{ github.event.comment.body }}
+          arg: ${{ steps.get_arg.outputs.ARGS }}
+
+      - name: Refer
+        run: |
+          echo "branch_ref: ${{ github.ref }}"
