@@ -17,7 +17,7 @@ jobs:
       - name: Get argument
         id: get_arg
         run: |
-          echo "ARGS=`echo ${{ github.event.comment.body }} | awk '{print $1}'`" >> "$GITHUB_OUTPUT"
+          echo "ARGS=`echo ${{ github.event.comment.body }} | awk '{print $2}'`" >> "$GITHUB_OUTPUT"
 
       - name: Arg trigger
         if: contains(github.event.comment.body, 'dayo')
