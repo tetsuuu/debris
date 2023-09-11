@@ -15,14 +15,15 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Get argument
+        id: get_arg
         run: |
-          echo "arg: ${{ github.event.comment.body }}"
+          echo "ARGS=`echo ${{ github.event.comment.body }} | awk '{print $1}'`" >> "$GITHUB_OUTPUT"
 
       - name: Arg trigger
         if: contains(github.event.comment.body, 'dayo')
         uses: ./.github/actions/asobi
         with:
-          arg: ${{ github.event.comment.body }}
+          arg: ${{ steps.get_arg.outputs.ARGS }}
 
       - name: Refer
         run: |
