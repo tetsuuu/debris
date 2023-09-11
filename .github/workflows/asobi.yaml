@@ -19,8 +19,13 @@ jobs:
         run: |
           echo "arg: ${{ github.event.comment.body }}"
 
-      - name: Get aws-s3-object-concatenator binary
+      - name: Arg trigger
         if: contains(github.event.comment.body, 'dayo')
         uses: ./.github/actions/asobi
         with:
           arg: ${{ github.event.comment.body }}
+
+      - name: Refer
+        if: startsWith(github.event.comment.body, '/asobi')
+        run: |
+          echo "branch_ref: ${{ github.ref }}"
