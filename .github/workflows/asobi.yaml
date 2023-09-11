@@ -5,14 +5,29 @@ on:
 
 jobs:
   asobi:
-    if: contains(github.event.comment.html_url, '/pull/') && startsWith(github.event.comment.body, '/asobi')
+    if: ${{ github.event.issue.pull_request }}
     permissions:
       pull-requests: write
+      deployments: write
       contents: write
       checks: read
     runs-on: ubuntu-22.04
     steps:
+      - name: branch-deploy
+        id: branch-build
+        uses: github/branch-deploy@v7.5.1
+        with:
+          environment: "dev"
+          environment_targets: "dev,stg,prd"
+          production_environment: "prd"
+          stable_branch: "develop"
+          trigger: "/asobi"
+          skip_ci: "true"
+
       - uses: actions/checkout@v4
+        if: ${{ steps.branch-build.outputs.continue == 'true' }}
+        with:
+          ref: ${{ steps.branch-build.outputs.ref }}
 
       - name: Get argument
         id: get_arg
