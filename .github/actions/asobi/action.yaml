@@ -11,6 +11,7 @@ runs:
   steps:
   - name: Echo arg
     shell: bash
-    run: >
-      echo "arg: ${{ inputs.arg }}"
+    run: |
+      echo 
+      "arg: ${{ inputs.arg }}"
       && echo "GITHUB_WORKSPACE: $GITHUB_WORKSPACE"
