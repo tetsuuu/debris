@@ -14,7 +14,7 @@ runs:
   steps:
   - name: Echo arg
     shell: bash
-    run: |
+    run: >-
       echo "arg: ${{ inputs.arg }}"
       echo "root_pwd: $root_pwd"
       echo "chirdlen_pwd: $pwd"
