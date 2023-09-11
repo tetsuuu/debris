@@ -1,0 +1,16 @@
+name: Asobi action
+description: 'Actions遊びだよ'
+
+inputs:
+  arg:
+    required: true
+    description: 'コメントの引数'
+
+runs:
+  using: "composite"
+  steps:
+  - name: Echo arg
+    shell: bash
+    run: >-
+      echo "arg: ${{ inputs.arg }}"
+      && echo "GITHUB_WORKSPACE: $GITHUB_WORKSPACE"

@@ -1,0 +1,26 @@
+name: Deploy with comment
+on:
+  issue_comment:
+    types: [created, edited]
+
+jobs:
+  build_and_push:
+    if: contains(github.event.comment.html_url, '/pull/') && startsWith(github.event.comment.body, '/asobi')
+    permissions:
+      pull-requests: write
+      contents: write
+      checks: read
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get argument
+        if: startsWith(github.event.comment.body, '/asobi')
+        run: |
+          echo "arg: ${{ github.event.comment.body }}"
+
+      - name: Get aws-s3-object-concatenator binary
+        if: contains(github.event.comment.body, 'dayo')
+        uses: ./.github/actions/asobi
+        with:
+          arg: ${{ github.event.comment.body }}
