@@ -34,6 +34,8 @@ jobs:
         run: |
           echo "ARGS=`echo ${{ github.event.comment.body }} | awk '{print $2}'`" >> "$GITHUB_OUTPUT"
           echo "ROOT_PWD=`pwd`" >> "$GITHUB_OUTPUT"
+          echo "comment_body: ${{ steps.branch-build.outputs.comment_body }}"
+          echo "environment: ${{ steps.branch-build.outputs.environment }}"
 
       - name: Arg trigger
         if: contains(github.event.comment.body, 'dayo')
