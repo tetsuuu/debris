@@ -29,6 +29,11 @@ jobs:
         with:
           ref: ${{ steps.branch-build.outputs.ref }}
 
+      - name: Output values
+        run: |
+          echo "comment_body: ${{ steps.branch-build.outputs.comment_body }}"
+          echo "environment: ${{ steps.branch-build.outputs.environment }}"
+
       - name: Get argument
         id: get_arg
         run: |

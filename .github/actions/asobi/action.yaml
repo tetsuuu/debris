@@ -17,4 +17,4 @@ runs:
     run: |
       echo "arg: ${{ inputs.arg }}"
       echo "root_pwd: ${{ inputs.root_pwd }}"
-      echo "chirdlen_pwd: $pwd"
+      echo "child_pwd: `pwd`"
