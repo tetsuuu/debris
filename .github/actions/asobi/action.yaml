@@ -13,6 +13,7 @@ runs:
   using: "composite"
   steps:
   - name: Echo arg
+    working-directory: ${{ inputs.arg }}"
     shell: bash
     run: |
       echo "arg: ${{ inputs.arg }}"

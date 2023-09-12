@@ -29,22 +29,16 @@ jobs:
         with:
           ref: ${{ steps.branch-build.outputs.ref }}
 
-      - name: Output values
-        run: |
-          echo "comment_body: ${{ steps.branch-build.outputs.comment_body }}"
-          echo "environment: ${{ steps.branch-build.outputs.environment }}"
-
       - name: Get argument
         id: get_arg
         run: |
-          echo "ARGS=`echo ${{ github.event.comment.body }} | awk '{print $2}'`" >> "$GITHUB_OUTPUT"
           echo "ROOT_PWD=`pwd`" >> "$GITHUB_OUTPUT"
 
       - name: Arg trigger
         if: contains(github.event.comment.body, 'dayo')
         uses: ./.github/actions/asobi
         with:
-          arg: ${{ steps.get_arg.outputs.ARGS }}
+          arg: ${{ steps.branch-build.outputs.environment }}"
           root_pwd: ${{ steps.get_arg.outputs.ROOT_PWD }}
 
       - name: Refer
