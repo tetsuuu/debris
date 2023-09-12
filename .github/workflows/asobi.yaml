@@ -39,7 +39,7 @@ jobs:
         if: contains(github.event.comment.body, 'dayo')
         uses: ./.github/actions/asobi
         with:
-          arg: ${{ steps.branch-build.outputs.environment }}"
+          arg: ${{ steps.branch-build.outputs.environment }}
           root_pwd: ${{ steps.get_arg.outputs.ROOT_PWD }}
 
       - name: Refer
