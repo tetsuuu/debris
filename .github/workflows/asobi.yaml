@@ -34,6 +34,7 @@ jobs:
         id: get_arg
         run: |
           echo "ROOT_PWD=`pwd`" >> "$GITHUB_OUTPUT"
+          echo "environment=aosobi" >> "$GITHUB_OUTPUT"
 
       - name: Arg trigger
         if: ${{ steps.branch-build.outputs.environment == 'dayo' }}
@@ -47,4 +48,5 @@ jobs:
         uses: ./.github/actions/build_image
         with:
           sha: ${{ steps.branch-build.outputs.sha }}
+          repositry: ${{ steps.get_arg.outputs.environment }}
           target: ${{ steps.branch-build.outputs.environment }}
