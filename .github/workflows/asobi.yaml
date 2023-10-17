@@ -3,22 +3,15 @@ on:
   issue_comment:
     types: [created, edited]
 
-permissions:
-  pull-requests: write
-  deployments: write
-  contents: write
-  checks: read
-
 jobs:
-  jyunbi:
+  asobi:
     if: ${{ github.event.issue.pull_request }}
+    permissions:
+      pull-requests: write
+      deployments: write
+      contents: write
+      checks: read
     runs-on: ubuntu-22.04
-    outputs:
-      continue: ${{ steps.branch-build.outputs.continue }}
-      ref: ${{ steps.branch-build.outputs.ref }}
-      repositry: ${{ steps.duplicate.outputs.environment }}
-      sha: ${{ steps.branch-build.outputs.sha }}
-      service: ${{ steps.branch-build.outputs.environment }}
     steps:
       - name: branch-deploy
         id: branch-build
@@ -32,36 +25,28 @@ jobs:
           trigger: "/asobi"
           skip_ci: "true"
 
-      - name: duplicate output key
-        id: duplicate
-        run: |
-          echo "environment=local" >> "$GITHUB_OUTPUT"
-
-  asobi:
-    needs: jyunbi
-    if: ${{ needs.jyunbi.outputs.continue }}
-    runs-on: ubuntu-22.04
-    steps:
       - uses: actions/checkout@v4
+        if: ${{ steps.branch-build.outputs.continue == 'true' }}
         with:
-          ref: ${{ needs.jyunbi.outputs.ref }}
+          ref: ${{ steps.branch-build.outputs.ref }}
 
       - name: Get argument
         id: get_arg
         run: |
           echo "ROOT_PWD=`pwd`" >> "$GITHUB_OUTPUT"
+          echo "environment=aosobi" >> "$GITHUB_OUTPUT"
 
       - name: Arg trigger
-        if: ${{ needs.jyunbi.outputs.service == 'dayo' }}
+        if: ${{ steps.branch-build.outputs.environment == 'dayo' }}
         uses: ./.github/actions/asobi
         with:
-          arg: ${{ needs.jyunbi.outputs.service }}
+          arg: ${{ steps.branch-build.outputs.environment }}
           root_pwd: ${{ steps.get_arg.outputs.ROOT_PWD }}
 
       - name: Build Image
-        if: ${{ needs.jyunbi.outputs.service != 'dayo' }}
+        if: ${{ steps.branch-build.outputs.environment != 'docker' }}
         uses: ./.github/actions/build_image
         with:
-          sha: ${{ needs.jyunbi.outputs.sha }}
-          repositry: ${{ needs.jyunbi.outputs.repositry }}
-          target: ${{ needs.jyunbi.outputs.service }}
+          sha: ${{ steps.branch-build.outputs.sha }}
+          repositry: ${{ steps.get_arg.outputs.environment }}
+          target: ${{ steps.branch-build.outputs.environment }}
