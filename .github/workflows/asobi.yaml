@@ -20,7 +20,7 @@ jobs:
           deploy_message_path: ".github/asobi_message.md"
           environment: "toybox"
           environment_targets: "dev,prd,dayo,asobi,docker"
-          production_environment: "prd"
+          production_environments: "prd"
           stable_branch: "develop"
           trigger: "/asobi"
           skip_ci: "true"
