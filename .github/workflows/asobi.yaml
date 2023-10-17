@@ -15,11 +15,11 @@ jobs:
     steps:
       - name: branch-deploy
         id: branch-build
-        uses: github/branch-deploy@v7.5.1
+        uses: github/branch-deploy@v8.1.0
         with:
           deploy_message_path: ".github/asobi_message.md"
           environment: "toybox"
-          environment_targets: "dev,prd,dayo"
+          environment_targets: "dev,prd,dayo,docker"
           production_environment: "prd"
           stable_branch: "develop"
           trigger: "/asobi"
@@ -36,12 +36,15 @@ jobs:
           echo "ROOT_PWD=`pwd`" >> "$GITHUB_OUTPUT"
 
       - name: Arg trigger
-        if: contains(github.event.comment.body, 'dayo')
+        if: ${{ steps.branch-build.outputs.environment == 'dayo' }}
         uses: ./.github/actions/asobi
         with:
           arg: ${{ steps.branch-build.outputs.environment }}
           root_pwd: ${{ steps.get_arg.outputs.ROOT_PWD }}
 
-      - name: Refer
-        run: |
-          echo "branch_ref: ${{ github.ref }}"
+      - name: Build Image
+        if: ${{ steps.branch-build.outputs.environment == 'docker' }}
+        uses: ./.github/actions/build_image
+        with:
+          sha: ${{ steps.branch-build.outputs.sha }}
+          target: ${{ steps.branch-build.outputs.environment }}
