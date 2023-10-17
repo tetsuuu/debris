@@ -9,7 +9,10 @@ inputs:
   registry:
     default: local
     description: 'Docker registry'
-    required: false
+    required: true
+  repositry:
+    description: 'Docker registry'
+    required: true
   sha:
     description: 'Commit SHA'
     required: true
@@ -33,4 +36,4 @@ runs:
       file: docker/${{ inputs.target }}/Dockerfile
       platforms: ${{ inputs.platforms }}
       push: false
-      tags: ${{ inputs.registry }}/${{ inputs.target }}:latest,${{ inputs.registry }}/${{ inputs.target }}:${{ inputs.sha }}
+      tags: ${{ inputs.registry }}/${{ inputs.repositry }}:latest,${{ inputs.registry }}/${{ inputs.repositry }}:${{ inputs.sha }}
