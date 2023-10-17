@@ -31,6 +31,6 @@ runs:
     with:
       context: docker/${{ inputs.target }}
       file: Dockerfile
-      platforms: ${{ inputs.target }}
+      platforms: ${{ inputs.platforms }}
       push: false
       tags: ${{ inputs.registry }}/${{ inputs.target }}:latest,${{ inputs.registry }}/${{ inputs.target }}:${{ inputs.sha }}
