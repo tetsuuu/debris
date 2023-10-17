@@ -19,7 +19,7 @@ jobs:
         with:
           deploy_message_path: ".github/asobi_message.md"
           environment: "toybox"
-          environment_targets: "dev,prd,dayo,docker"
+          environment_targets: "dev,prd,dayo,asobi,docker"
           production_environment: "prd"
           stable_branch: "develop"
           trigger: "/asobi"
@@ -43,7 +43,7 @@ jobs:
           root_pwd: ${{ steps.get_arg.outputs.ROOT_PWD }}
 
       - name: Build Image
-        if: ${{ steps.branch-build.outputs.environment == 'docker' }}
+        if: ${{ steps.branch-build.outputs.environment != 'docker' }}
         uses: ./.github/actions/build_image
         with:
           sha: ${{ steps.branch-build.outputs.sha }}
