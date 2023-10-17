@@ -19,3 +19,9 @@ runs:
       echo "arg: ${{ inputs.arg }}"
       echo "root_pwd: ${{ inputs.root_pwd }}"
       echo "child_pwd: `pwd`"
+
+  - name: inputs arg
+    if: ${{ inputs.arg == 'dayo' }}
+    shell: bash
+    run: |
+      echo "arg: ${{ inputs.arg }}"

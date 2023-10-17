@@ -44,7 +44,7 @@ jobs:
           root_pwd: ${{ steps.get_arg.outputs.ROOT_PWD }}
 
       - name: Build Image
-        if: ${{ steps.branch-build.outputs.environment != 'docker' }}
+        if: ${{ steps.branch-build.outputs.environment != 'dayo' }}
         uses: ./.github/actions/build_image
         with:
           sha: ${{ steps.branch-build.outputs.sha }}
