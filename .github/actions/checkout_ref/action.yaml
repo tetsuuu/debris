@@ -12,3 +12,11 @@ runs:
   - uses: actions/checkout@v4
     with:
       ref: ${{ inputs.ref }}
+      repositry: tetsuuu/bundletool-action
+      path: bundletool-action
+
+  - name: List files
+    shell: bash
+    run: |
+      ls -la
+      ls -lR bundletool-action
