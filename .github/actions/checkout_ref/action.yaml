@@ -2,7 +2,15 @@ name: Checkout
 description: Checkout specific branch
 
 inputs:
+  path:
+    default: '.'
+    description: 'Clone path'
+    required: false
+  repo:
+    description: 'Target repository'
+    required: true
   ref:
+    default: 'main'
     description: 'Target branch'
     required: false
 
@@ -12,3 +20,11 @@ runs:
   - uses: actions/checkout@v4
     with:
       ref: ${{ inputs.ref }}
+      repository: ${{ inputs.repo }}
+      path: ${{ inputs.path }}
+
+  - name: List files
+    shell: bash
+    run: |
+      ls -la
+      ls -lR bundletool-action
