@@ -1,0 +1,58 @@
+name: Comment asobi
+on:
+  issue_comment:
+    types: [created, edited]
+
+jobs:
+  asobi:
+    if: ${{ github.event.issue.pull_request }}
+    permissions:
+      pull-requests: write
+      deployments: write
+      contents: write
+      checks: read
+    runs-on: ubuntu-22.04
+    steps:
+      - name: branch-deploy
+        id: branch-build
+        uses: github/branch-deploy@v8.1.0
+        with:
+          deploy_message_path: ".github/asobi_message.md"
+          environment: "toybox"
+          environment_targets: "dev,prd,dayo,asobi,nano,desu"
+          production_environments: "prd"
+          stable_branch: "develop"
+          trigger: "/asobi"
+          skip_ci: "true"
+
+      - uses: actions/checkout@v4
+        if: ${{ steps.branch-build.outputs.continue == 'true' }}
+        with:
+          ref: ${{ steps.branch-build.outputs.ref }}
+
+      - name: Get argument
+        id: get_arg
+        run: |
+          echo "ROOT_PWD=`pwd`" >> "$GITHUB_OUTPUT"
+          echo "environment=aosobi" >> "$GITHUB_OUTPUT"
+
+      - name: Check environment
+        if: ${{ steps.branch-build.outputs.environment == 'desu' }}
+        uses: ./.github/actions/checkout_ref
+        with:
+          ref: master
+
+      - name: Arg trigger
+        if: ${{ steps.branch-build.outputs.environment == 'dayo' }}
+        uses: ./.github/actions/asobi
+        with:
+          arg: ${{ steps.branch-build.outputs.environment }}
+          root_pwd: ${{ steps.get_arg.outputs.ROOT_PWD }}
+
+      - name: Build Image
+        if: ${{ steps.branch-build.outputs.environment == 'nano' }}
+        uses: ./.github/actions/build_image
+        with:
+          sha: ${{ steps.branch-build.outputs.sha }}
+          repositry: ${{ steps.get_arg.outputs.environment }}
+          target: ${{ steps.branch-build.outputs.environment }}

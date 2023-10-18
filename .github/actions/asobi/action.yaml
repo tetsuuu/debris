@@ -1,0 +1,27 @@
+name: Asobi action
+description: 'Actions遊びだよ'
+
+inputs:
+  arg:
+    required: true
+    description: 'コメントの引数'
+  root_pwd:
+    required: false
+    description: 'ルートディレクトリのパス'
+
+runs:
+  using: "composite"
+  steps:
+  - name: Echo arg
+    working-directory: demo/${{ inputs.arg }}
+    shell: bash
+    run: |
+      echo "arg: ${{ inputs.arg }}"
+      echo "root_pwd: ${{ inputs.root_pwd }}"
+      echo "child_pwd: `pwd`"
+
+  - name: inputs arg
+    if: ${{ inputs.arg == 'dayo' }}
+    shell: bash
+    run: |
+      echo "arg: ${{ inputs.arg }}"

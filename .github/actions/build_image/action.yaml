@@ -1,0 +1,39 @@
+name: Build Image
+description: Build specific image and push to ECR
+
+inputs:
+  platforms:
+    default: linux/arm64
+    description: 'Docker buildx platforms'
+    required: false
+  registry:
+    default: local
+    description: 'Docker registry'
+    required: true
+  repositry:
+    description: 'Docker registry'
+    required: true
+  sha:
+    description: 'Commit SHA'
+    required: true
+  target:
+    description: 'Target image to build'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+  - name: Set up QEMU
+    uses: docker/setup-qemu-action@v3
+
+  - name: Set up Docker Buildx
+    uses: docker/setup-buildx-action@v3
+
+  - name: Build and Push Docker Image
+    uses: docker/build-push-action@v5
+    with:
+      context: docker/${{ inputs.target }}
+      file: docker/${{ inputs.target }}/Dockerfile
+      platforms: ${{ inputs.platforms }}
+      push: false
+      tags: ${{ inputs.registry }}/${{ inputs.repositry }}:latest,${{ inputs.registry }}/${{ inputs.repositry }}:${{ inputs.sha }}
