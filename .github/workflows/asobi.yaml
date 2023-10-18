@@ -40,7 +40,9 @@ jobs:
         if: ${{ steps.branch-build.outputs.environment == 'desu' }}
         uses: ./.github/actions/checkout_ref
         with:
-          ref: master
+          path: bundletool-action
+          repo: tetsuuu/bundletool-action
+          ref: main
 
       - name: Arg trigger
         if: ${{ steps.branch-build.outputs.environment == 'dayo' }}
