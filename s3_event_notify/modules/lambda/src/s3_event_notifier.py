@@ -83,7 +83,7 @@ def format_record_to_slack_message(record):
             {
                 'color': color,
                 'title': subject,
-                'text': 'SFTP Error from toppan',
+                'text': 'recieve object',
                 'fields': [
                     {
                         'title': 'EventName',
