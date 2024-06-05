@@ -25,6 +25,7 @@ jobs:
       - name: Check Aqua CLI
         run: |
           aqua --version
-          terraform --version
           conftest --version
+          sops --version
+          terraform --version
           tfmigrate --version
