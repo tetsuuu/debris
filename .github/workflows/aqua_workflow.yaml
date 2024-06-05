@@ -26,4 +26,5 @@ jobs:
         run: |
           aqua --version
           terraform --version
+          conftest --version
           tfmigrate --version
