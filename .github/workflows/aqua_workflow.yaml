@@ -19,6 +19,11 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
+      - name: Restore Cache Terraform Plugin Cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ~/.local/share/aquaproj-aqua
+          key: v1-aqua-installer-${{runner.os}}-${{runner.arch}}-${{hashFiles('aqua.yaml')}}
       - uses: aquaproj/aqua-installer@v3.0.1
         with:
           aqua_version: v2.29.0
@@ -29,3 +34,8 @@ jobs:
           sops --version
           terraform --version
           tfmigrate --version
+      - name: Restore and Save Cache Terraform Plugin Cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/share/aquaproj-aqua
+          key: v1-aqua-installer-${{runner.os}}-${{runner.arch}}-${{hashFiles('aqua.yaml')}}
