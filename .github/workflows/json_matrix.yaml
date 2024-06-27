@@ -33,13 +33,13 @@ jobs:
             }
 
             for (const key of Object.keys(accounts)) {
-              const accountId = accountInfo[key].account_id
-              const clientId = accountInfo[key].client_id
+              const accountId = accounts[key].account_id
+              const clientId = accounts[key].client_id
               const dir = key
-              const platform = accountInfo[key].platform
-              const role = accountInfo[key].role
-              const subscriptionId = accountInfo[key].subscription_id
-              const tenantId = accountInfo[key].tenant_id
+              const platform = accounts[key].platform
+              const role = accounts[key].role
+              const subscriptionId = accounts[key].subscription_id
+              const tenantId = accounts[key].tenant_id
 
               body.push({
                 account: accountId,
