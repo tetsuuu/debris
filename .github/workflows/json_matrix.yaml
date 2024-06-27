@@ -66,7 +66,7 @@ jobs:
         target: ${{ fromJson(needs.init.outputs.matrix) }}
     defaults:
       run:
-        working-directory: ./${{ matrix.target.dir }}
+        working-directory: ${{ matrix.target.dir }}
     name: variabels ${{ matrix.target.dir }}
     steps:
       - name: Checkout
@@ -74,7 +74,7 @@ jobs:
 
       - name: Variables
         run: |
-          echo "pwd: ${{ github.workspace }}"
+          echo "pwd: $(pwd)"
           echo "account: ${{ matrix.target.account }}"
           echo "client: ${{ matrix.target.client }}"
           echo "platform: ${{ matrix.target.platform }}"
