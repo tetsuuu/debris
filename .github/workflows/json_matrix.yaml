@@ -17,15 +17,8 @@ permissions:
 jobs:
   init:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        dir_name: [demo, codebuild]
     outputs:
       matrix: ${{ steps.set-matrix.outputs.result }}
-    defaults:
-      run:
-        working-directory: ./${{ matrix.dir_name }}
     steps:
       - name: Set matrix
         id: set-matrix
@@ -33,23 +26,20 @@ jobs:
         with:
           script: |
             const body = []
-            const githubWorkspace = "${{ github.workspace }}"
-            const parts = githubWorkspace.split("/")
-            const dirName = parts[parts.length - 1] 
 
             const accounts = {
               "demo": { account_id: "aid0000001", client_id: "cid0000002", platform: "aws", role: "role000004", subscription_id: "sid0000005", tenant_id: "tid0000006" },
               "codebuild": { account_id: "aid0000007", client_id: "cid0000008", platform: "azure", role: "role000010", subscription_id: "sid0000011", tenant_id: "tid0000012" },
             }
 
-            for (const accountInfo of accounts) {
-              const accountId = accountInfo[`${dirName}`].account_id
-              const clientId = accountInfo[`${dirName}`].client_id
-              const dir = `${dirName}`
-              const platform = accountInfo[`${dirName}`].platform
-              const role = accountInfo[`${dirName}`].role
-              const subscriptionId = accountInfo[`${dirName}`].subscription_id
-              const tenantId = accountInfo[`${dirName}`].tenant_id
+            for (const key of Object.keys(accounts)) {
+              const accountId = accountInfo[key].account_id
+              const clientId = accountInfo[key].client_id
+              const dir = key
+              const platform = accountInfo[key].platform
+              const role = accountInfo[key].role
+              const subscriptionId = accountInfo[key].subscription_id
+              const tenantId = accountInfo[key].tenant_id
 
               body.push({
                 account: accountId,
