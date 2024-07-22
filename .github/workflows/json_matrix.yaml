@@ -1,0 +1,84 @@
+name: json matrix with github/script
+
+on:
+  workflow_dispatch:
+  # pull_request:
+  #   types:
+  #     - opened
+  #     - reopened
+  #     - synchronize
+  #   branches:
+  #     - develop
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+
+jobs:
+  init:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.result }}
+    steps:
+      - name: Set matrix
+        id: set-matrix
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = []
+
+            const accounts = {
+              "demo": { account_id: "aid0000001", client_id: "cid0000002", platform: "aws", role: "role000004", subscription_id: "sid0000005", tenant_id: "tid0000006" },
+              "codebuild": { account_id: "aid0000007", client_id: "cid0000008", platform: "azure", role: "role000010", subscription_id: "sid0000011", tenant_id: "tid0000012" },
+            }
+
+            for (const key of Object.keys(accounts)) {
+              const accountId = accounts[key].account_id
+              const clientId = accounts[key].client_id
+              const dir = key
+              const platform = accounts[key].platform
+              const role = accounts[key].role
+              const subscriptionId = accounts[key].subscription_id
+              const tenantId = accounts[key].tenant_id
+
+              body.push({
+                account: accountId,
+                client: clientId,
+                dir: dir,
+                platform: platform,
+                role: role,
+                subscription: subscriptionId,
+                tenant: tenantId,
+              })
+            }
+
+            core.info("body: " + JSON.stringify(body))
+            return body
+
+  test:
+    if: ${{ needs.init.outputs.matrix != '[]' }}
+    runs-on: ubuntu-latest
+    needs:
+      - init
+    strategy:
+      fail-fast: false
+      matrix:
+        target: ${{ fromJson(needs.init.outputs.matrix) }}
+    defaults:
+      run:
+        working-directory: ${{ matrix.target.dir }}
+    name: variabels ${{ matrix.target.dir }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Variables
+        run: |
+          echo "pwd: $(pwd)"
+          echo "account: ${{ matrix.target.account }}"
+          echo "client: ${{ matrix.target.client }}"
+          echo "platform: ${{ matrix.target.platform }}"
+          echo "role: ${{ matrix.target.role }}"
+          echo "subscription: ${{ matrix.target.subscription }}"
+          echo "tenant: ${{ matrix.target.tenant }}"

@@ -1,0 +1,42 @@
+name: git-pr-release
+on:
+  push:
+    branches:
+      - develop
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+
+jobs:
+  gitPrRelease:
+    name: git-pr-release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.1
+
+      - name: Create template
+        run: |
+          cat << EOF > ./template.erb
+          Release @<%= Time.now.strftime("%Y-%m-%d") %>
+          <% pull_requests.each do |pr| -%>
+          <%=  pr.to_checklist_item %>
+          <% end -%>
+          EOF
+
+      - name: create a release pull request
+        run: |
+          gem install -N git-pr-release -v "2.2.0"
+          git-pr-release --no-fetch
+        env:
+          GIT_PR_RELEASE_BRANCH_PRODUCTION: master
+          GIT_PR_RELEASE_BRANCH_STAGING: develop
+          GIT_PR_RELEASE_TEMPLATE: ./template.erb
+          GIT_PR_RELEASE_TOKEN: ${{ secrets.GITHUB_TOKEN }}

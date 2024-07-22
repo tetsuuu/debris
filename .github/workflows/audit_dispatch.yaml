@@ -1,0 +1,47 @@
+name: Cargo audit
+on:
+  workflow_dispatch:
+    inputs:
+      working-directory:
+        description: 'Rust project directory'
+        required: false
+        default: '.'
+
+jobs:
+  cargo_audit:
+    # Workarount for Extention warning
+    env:
+      COUNT_VULUNERABILITY: null
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install cargo-audit
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-audit
+
+      - name: Audit
+        run: |
+          cargo audit --json | sed 's/\\n/<br>/g' | jq ".vulnerabilities" > audit.json
+          CNT=$(cat audit.json | jq ".count")
+          echo "COUNT_VULUNERABILITY=$CNT" >> $GITHUB_ENV
+          echo "Vulunelability count: $CNT"
+
+      - name: Summarize
+        if: ${{ env.COUNT_VULUNERABILITY > 0 }}
+        run: |
+          echo "### cargo audit result" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| RUSTSEC | Package | CVEs | CVSS | Description |" >> $GITHUB_STEP_SUMMARY
+          echo "|---|---|---|---|---|" >> $GITHUB_STEP_SUMMARY
+          cat audit.json | jq -rc '.list[].advisory | "| \(.id) | \(.package) | \(.aliases[0]) | \(.cvss) | \(.description) |"' | while read line; do
+            echo $line >> $GITHUB_STEP_SUMMARY
+          done
