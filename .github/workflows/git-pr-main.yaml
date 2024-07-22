@@ -36,7 +36,7 @@ jobs:
           gem install -N git-pr-release -v "2.2.0"
           git-pr-release --no-fetch
         env:
-          GIT_PR_RELEASE_BRANCH_PRODUCTION: main
+          GIT_PR_RELEASE_BRANCH_PRODUCTION: master
           GIT_PR_RELEASE_BRANCH_STAGING: develop
           GIT_PR_RELEASE_TEMPLATE: ./template.erb
           GIT_PR_RELEASE_TOKEN: ${{ secrets.GITHUB_TOKEN }}
