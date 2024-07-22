@@ -41,6 +41,7 @@ jobs:
           echo "### cargo audit result" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "| RUSTSEC | Package | CVEs | CVSS | Description |" >> $GITHUB_STEP_SUMMARY
-          cat audit.json | jq '.list[].advisory | "| \(.id) | \(.package) | \(.aliases[0]) | \(.cvss) | \(.description) |"' | while read line; do
+          echo "|---|---|---|---|---|" >> $GITHUB_STEP_SUMMARY
+          cat audit.json | jq -rc '.list[].advisory | "| \(.id) | \(.package) | \(.aliases[0]) | \(.cvss) | \(.description) |"' | while read line; do
             echo $line >> $GITHUB_STEP_SUMMARY
           done
