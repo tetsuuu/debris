@@ -38,17 +38,17 @@ jobs:
       - name: Format Message body
         id: body
         run: |
-          echo "| Title | Severity | ObservedAt | Name | Type | Description |"
-          echo "|---|---|---|---|---|---|"
-          cat ${{ steps.init.outputs.path }}_finding.json | jq -rc '.findings[] | "| \(.title) | \(.severity) | \(.firstObservedAt) | \(.resources[0].tags.Name) | \(.resources[0].type) | \(.description) |"' | while read line; do
-            echo $line
+          echo "| Title | Severity | ObservedAt | Name | Type | Description |" >> ./issue_comment.md
+          echo "|---|---|---|---|---|---|" >> ./issue_comment.md
+          cat ${{ steps.init.outputs.path }}_finding.json | jq -rc '.findings[] | "| \(.title) | \(.severity) | \(.firstObservedAt) | \(.resources[0].tags.Name) | \(.resources[0].type) | \(.description) |\\n"' | while read line; do
+            echo $line >> ./issue_comment.md
           done
 
       - name: Create Issue
-        if: ${{ steps.init.outputs.min < 20 }}
+        if: ${{ steps.init.outputs.min < 40 }}
         env:
           ASSIGNEES: tetsuuu
-          BODY: ${{ steps.body.outputs.stdout }}
+          BODY_FILE: ${{ github.workspace }}/issue_comment.md
           CLOSE_PREVIOUS: false
           GH_REPO: ${{ github.repository }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -68,10 +68,10 @@ jobs:
             --title "$TITLE" \
             --assignee "$ASSIGNEES" \
             --label "$LABELS" \
-            --body "$BODY")
+            --body-file "$BODY_FILE")
 
       - name: Add comment
-        if: ${{ steps.init.outputs.min > 20 }}
+        if: ${{ steps.init.outputs.min > 40 }}
         env:
           BODY: ${{ steps.body.outputs.stdout }}
           GH_REPO: ${{ github.repository }}
