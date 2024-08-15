@@ -45,7 +45,7 @@ jobs:
           done
 
       - name: Create Issue
-        if: ${{ steps.init.outputs.min < 15 }}
+        if: ${{ steps.init.outputs.min < 20 }}
         env:
           ASSIGNEES: tetsuuu
           BODY: ${{ steps.body.outputs.stdout }}
@@ -69,10 +69,9 @@ jobs:
             --assignee "$ASSIGNEES" \
             --label "$LABELS" \
             --body "$BODY")
-          fi
 
       - name: Add comment
-        if: ${{ steps.init.outputs.min > 15 }}
+        if: ${{ steps.init.outputs.min > 20 }}
         env:
           BODY: ${{ steps.body.outputs.stdout }}
           GH_REPO: ${{ github.repository }}
