@@ -1,0 +1,86 @@
+name: create-issue
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  issues: write
+  contents: write
+
+jobs:
+  monthly:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Initialize
+        id: init
+        env:
+          TZ: Asia/Tokyo
+        run: |
+          echo "path=$(date +'%Y%m')" >> $GITHUB_OUTPUT
+          echo "year=$(date +'%-Y')" >> $GITHUB_OUTPUT
+          echo "month=$(date +'%-m')" >> $GITHUB_OUTPUT
+          echo "min=$(date +'%-M')" >> $GITHUB_OUTPUT
+
+      - name: Copy dummy file
+        run: cp -p dummy/finding.json ./${{ steps.init.outputs.path }}_finding.json
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.init.outputs.path }}_findings
+          path: ${{ github.workspace }}/${{ steps.init.outputs.path }}_finding.json
+          if-no-files-found: error
+          retention-days: 1
+
+      - name: Format Message body
+        id: body
+        run: |
+          echo "| Title | Severity | ObservedAt | Name | Type | Description |"
+          echo "|---|---|---|---|---|---|"
+          cat ${{ steps.init.outputs.path }}_finding.json | jq -rc '.findings[] | "| \(.title) | \(.severity) | \(.firstObservedAt) | \(.resources[0].tags.Name) | \(.resources[0].type) | \(.description) |"' | while read line; do
+            echo $line
+          done
+
+      - name: Create Issue
+        if: ${{ steps.init.outputs.min < 15 }}
+        env:
+          ASSIGNEES: tetsuuu
+          BODY: ${{ steps.body.outputs.stdout }}
+          CLOSE_PREVIOUS: false
+          GH_REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LABELS: periodical,automate
+          TITLE: 【Vuls】${{ steps.init.outputs.year }}/${{ steps.init.outputs.month }}作成
+        run: |
+          if [[ $CLOSE_PREVIOUS == true ]]; then
+            previous_issue_number=$(gh issue list \
+              --label "$LABELS" \
+              --json number \
+              --jq '.[0].number')
+            if [[ -n $previous_issue_number ]]; then
+              gh issue close "$previous_issue_number"
+            fi
+          fi
+          new_issue_url=$(gh issue create \
+            --title "$TITLE" \
+            --assignee "$ASSIGNEES" \
+            --label "$LABELS" \
+            --body "$BODY")
+          fi
+
+      - name: Add comment
+        if: ${{ steps.init.outputs.min > 15 }}
+        env:
+          BODY: ${{ steps.body.outputs.stdout }}
+          GH_REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LABELS: periodical,automate
+        run: |
+          issue_number=$(gh issue list \
+              --label "$LABELS" \
+              --json number \
+              --jq '.[0].number')
+          gh issue comment "$issue_number" --body "$BODY"
