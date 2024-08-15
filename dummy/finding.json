@@ -1,0 +1,96 @@
+{
+    "findings": [
+        {
+            "description": "Windows Secure Kernel Mode Elevation of Privilege Vulnerability",
+            "firstObservedAt": "2024-08-11T21:31:25.873Z",
+            "lastObservedAt": "2024-08-13T07:14:31.581Z",
+            "remediation": {
+                "recommendation": {
+                    "text": "See References"
+                }
+            },
+            "resources": [
+                {
+                    "tags": {
+                        "Name": "instance-a"
+                    },
+                    "type": "AWS_EC2_INSTANCE"
+                }
+            ],
+            "severity": "MEDIUM",
+            "status": "ACTIVE",
+            "title": "CVE-2024-12345",
+            "type": "PACKAGE_VULNERABILITY",
+            "updatedAt": "2024-08-13T07:14:31.581Z"
+        },
+        {
+            "description": "Windows Update Stack Elevation of Privilege Vulnerability",
+            "firstObservedAt": "2024-08-11T21:31:25.873Z",
+            "lastObservedAt": "2024-08-13T07:14:31.581Z",
+            "remediation": {
+                "recommendation": {
+                    "text": "See References"
+                }
+            },
+            "resources": [
+                {
+                    "tags": {
+                        "Name": "instance-a"
+                    },
+                    "type": "AWS_EC2_INSTANCE"
+                }
+            ],
+            "severity": "HIGH",
+            "status": "ACTIVE",
+            "title": "CVE-2024-54321",
+            "type": "PACKAGE_VULNERABILITY",
+            "updatedAt": "2024-08-13T07:14:31.581Z"
+        },
+        {
+            "description": "Windows Update Stack Elevation of Privilege Vulnerability",
+            "firstObservedAt": "2024-08-11T21:27:07.061Z",
+            "lastObservedAt": "2024-08-11T21:27:07.061Z",
+            "remediation": {
+                "recommendation": {
+                    "text": "See References"
+                }
+            },
+            "resources": [
+                {
+                    "tags": {
+                        "Name": "instance-b"
+                    },
+                    "type": "AWS_EC2_INSTANCE"
+                }
+            ],
+            "severity": "HIGH",
+            "status": "ACTIVE",
+            "title": "CVE-2024-54321",
+            "type": "PACKAGE_VULNERABILITY",
+            "updatedAt": "2024-08-11T21:27:07.061Z"
+        },
+        {
+            "description": "Windows Secure Kernel Mode Elevation of Privilege Vulnerability",
+            "firstObservedAt": "2024-08-11T21:27:07.061Z",
+            "lastObservedAt": "2024-08-11T21:27:07.061Z",
+            "remediation": {
+                "recommendation": {
+                    "text": "See References"
+                }
+            },
+            "resources": [
+                {
+                    "tags": {
+                        "Name": "instance-b"
+                    },
+                    "type": "AWS_EC2_INSTANCE"
+                }
+            ],
+            "severity": "MEDIUM",
+            "status": "ACTIVE",
+            "title": "CVE-2024-12345",
+            "type": "PACKAGE_VULNERABILITY",
+            "updatedAt": "2024-08-11T21:27:07.061Z"
+        }
+    ]
+}
