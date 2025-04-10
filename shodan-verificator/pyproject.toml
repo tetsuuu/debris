@@ -1,0 +1,10 @@
+[project]
+name = "shodan-verificator"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "argparse>=1.4.0",
+    "shodan>=1.31.0",
+]
