@@ -4,3 +4,5 @@
 *.envrc
 *.lambda.zip
 **/target/
+**/.venv
+**/*.csv
